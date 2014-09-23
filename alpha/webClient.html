@@ -30,7 +30,8 @@ webSocket.onmessage = function(event) {
 }
 webSocket.onopen = function() {
 	var message = {
-		data: "yo"
+		type: "message",
+		message: "yo",
 	}
 	webSocket.send(JSON.stringify(message));
 }
