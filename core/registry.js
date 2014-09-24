@@ -71,14 +71,22 @@
 		add: function(componentId) {
 			if (this.list.indexOf(componentId) === -1) {
 				this.list.push(componentId);	
+				this.sendUpdate(registry.get(componentId));
 			}
 		},
 		isSubscribed: function(componentId) {
 			return this.list.indexOf(componentId) !== -1;
 		},
+		sendUpdate: function(component) {
+			var message = {
+				type: "presence",
+				list: components.list,
+			};
+			component.send(message);
+		},
 		sendUpdates: function() {
 			for (var i = 0; i < this.list.length; i++) {
-				registry.get(this.list[i]).send(components.list);
+				this.sendUpdate(registry.get(this.list[i]));
 			}
 		},
 		removeIfFound: function(componentId) {
@@ -86,7 +94,7 @@
 			if (index != -1) {
 				this.list.splice(index,1);
 			}
-		}
+		},
 	};
 
 	var registry = {

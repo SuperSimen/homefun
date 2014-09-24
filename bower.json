@@ -1,0 +1,22 @@
+{
+  "name": "homefun",
+  "version": "0.0.0",
+  "homepage": "https://github.com/SuperSimen/homefun",
+  "authors": [
+    "Simen Owesen-Lein <simen.owesenlein@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angularjs": "~1.2.25",
+    "angular": "~1.2.25",
+    "angular-ui-router": "~0.2.11",
+    "bootstrap": "~3.2.0"
+  }
+}
