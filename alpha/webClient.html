@@ -30,10 +30,17 @@ webSocket.onmessage = function(event) {
 }
 webSocket.onopen = function() {
 	var message = {
+		type: "register",
+		networkName: "dude",
+		className: "browser",
+	}
+	webSocket.send(JSON.stringify(message) + "\n");
+	message = {
 		type: "message",
+		to: "dude",
 		message: "yo",
 	}
-	webSocket.send(JSON.stringify(message));
+	webSocket.send(JSON.stringify(message) + "\n");
 }
 
 </script>

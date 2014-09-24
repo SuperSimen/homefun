@@ -78,6 +78,7 @@
 					remoteAddress: sessionObject.remoteAddress,
 					remotePort: sessionObject.remotePort,
 					id: id,
+					name: "",
 					className: className,
 					networkName: networkName,
 				};

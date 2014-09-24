@@ -3,33 +3,27 @@
 
 	var registry = require('./registry.js');
 
+	var relay = require('./relay.js');
+	relay.importRegistry(registry);
+	var protocol = require('./protocol.js');
+
 	var net = require('net');
 	var socketServer = net.createServer(function (socket) {
 		socket.setEncoding('utf8');
 
 		var sessionObject = createSessionObject(
 			function(object) {
-				socket.write(JSON.stringify(object) + "\n");
-			},
-			function() {
-				socket.end();
-			},
-			socket.remoteAddress,
-			socket.remotePort
+			socket.write(JSON.stringify(object) + "\n");
+		},
+		function() {
+			socket.end();
+		},
+		socket.remoteAddress,
+		socket.remotePort
 		);
 
 		socket.on('data', function(data) {
-			var dataArray = data.split("\n");
-			var temp;
-			console.log(dataArray);
-			for (var d = 0; d < dataArray.length; d++) {
-				console.log(d);
-				try {
-					temp = JSON.parse(dataArray[d]);
-					onIncomingData(temp, sessionObject);
-				}
-				catch (e) {}
-			}
+			onIncomingData(data, sessionObject);
 		});
 	});
 
@@ -44,29 +38,20 @@
 
 		var sessionObject = createSessionObject(
 			function(object) {
-				webSocket.send(JSON.stringify(object) + "\n");
-			},
-			function() {
-				webSocket.close();
-			},
-			webSocket._socket.remoteAddress,
-			webSocket._socket.remotePort
+			webSocket.send(JSON.stringify(object) + "\n");
+		},
+		function() {
+			webSocket.close();
+		},
+		webSocket._socket.remoteAddress,
+		webSocket._socket.remotePort
 		);
-		
+
 		webSocket.on('message', function(data) {
-			onIncomingData(JSON.parse(data), sessionObject);
+			onIncomingData(data, sessionObject);
 		});
 	});
 
-	var protocol = {
-		REGISTER: "register",
-		UNREGISTER: "unregister",
-		MESSAGE: "message",
-		BROADCAST: "broadcast",
-		PUBLISH: "publish",
-		SUBSCRIBE: "subscribe",
-		REPLY: "reply",
-	};
 
 	function createSessionObject (sendInput, closeInput, remoteAddressInput, remotePortInput) {
 
@@ -83,82 +68,76 @@
 		return sessionObject;
 	}
 
-	function onIncomingData (data, sessionObject) {
-		console.log(data);
-		var reply = {
-			type: protocol.REPLY,
-		};
 
-		function replyMessage(type, failed, errorMessage) {
-			var reply;
-			if (failed) {
-				reply = type + " failed";
-				if (errorMessage) {
-					reply += ": " + errorMessage;
+	function onIncomingData (data, sessionObject) {
+		var dataArray = data.split("\n");
+		var temp;
+		for (var d = 0; d < dataArray.length; d++) {
+			if (dataArray[d].length) {
+				try {
+					temp = JSON.parse(dataArray[d]);
+					handleData(temp, sessionObject);
+				}
+				catch (e) {
+					sessionObject.send(replyMessage("Parse", true, "Could not parse data, not correct JSON object"));
 				}
 			}
-			else {
-				reply = type + " received";
-			}
+		}
+	}
 
-			return reply;
+	function replyMessage(type, failed, errorMessage) {
+		var reply;
+		if (failed) {
+			reply = type + " failed";
+			if (errorMessage) {
+				reply += ": " + errorMessage;
+			}
+		}
+		else {
+			reply = type + " received";
 		}
 
+		return { 
+			type: protocol.REPLY,
+			message: reply,
+		};
+	}
+
+	function handleData (data, sessionObject) {
+		console.log(data);
+
+		var reply;
 		var error;
-		if (data.type === protocol.REGISTER) {
-			if (data.networkName && data.className) {
-				error = registry.register(sessionObject, data.networkName, data.className);
-				reply.message = replyMessage("Register", error, error);
-			}
-			else {
-				reply.message = replyMessage("Register", true);
-			}
+		if (!protocol.isValidData(data)) {
+			reply = replyMessage(data.type, true, "Data did not match protocol");
+		}
+		else if (data.type === protocol.REGISTER) {
+			error = registry.register(sessionObject, data.networkName, data.className);
+			reply = replyMessage("Register", error, error);
+			reply.yourId = sessionObject.getId();
 		}
 		else if (data.type === protocol.UNREGISTER) {
 			error = registry.deregister(sessionObject);
-			reply.message = replyMessage("Unregister", error, error);
-
+			reply = replyMessage("Unregister", error, error);
 		}
 		else if (data.type === protocol.MESSAGE) {
-			if (data.message && data.to) {
-				reply.message = replyMessage("Register", false);
-			}
-			else {
-				reply.message = replyMessage("Register", true);
-			}
-
+			error = relay.sendMessage(data, sessionObject.getId());
+			reply = replyMessage("Message", error, error);
 		}
 		else if (data.type === protocol.BROADCAST) {
-			if (data.message) {
-				reply.message = replyMessage("Broadcast", false);
-			}
-			else {
-				reply.message = replyMessage("Broadcast", true);
-			}
-
+			reply = replyMessage("Broadcast", false);
 		}
 		else if (data.type === protocol.PUBLISH) {
-			if (data.message) {
-				reply.message = replyMessage("Publish", false);
-			}
-			else {
-				reply.message = replyMessage("Publish", true);
-			}
-
+			reply = replyMessage("Publish", false);
 		}
 		else if (data.type === protocol.SUBSCRIBE) {
-			if (data.to) {
-				reply.message = replyMessage("Subscribe", false);
-			}
-			else {
-				reply.message = replyMessage("Subscribe", true);
-			}
-
+			reply = replyMessage("Subscribe", false);
+		}
+		else {
+			reply = replyMessage("Parse", true, "Could not interpret data");
 		}
 
 		console.log(reply.message);
 		sessionObject.send(reply);
 	}
-
-
 })();
