@@ -74,12 +74,16 @@
 		var temp;
 		for (var d = 0; d < dataArray.length; d++) {
 			if (dataArray[d].length) {
+				var parsingFailed = false;
 				try {
 					temp = JSON.parse(dataArray[d]);
-					handleData(temp, sessionObject);
 				}
 				catch (e) {
+					parsingFailed = true;
 					sessionObject.send(replyMessage("Parse", true, "Could not parse data, not correct JSON object"));
+				}
+				if (!parsingFailed) {
+					handleData(temp, sessionObject);
 				}
 			}
 		}
@@ -98,7 +102,7 @@
 		}
 
 		return { 
-			type: protocol.REPLY,
+			type: protocol.SERVER_ACK,
 			message: reply,
 		};
 	}
@@ -125,16 +129,18 @@
 			reply = replyMessage("Message", error, error);
 		}
 		else if (data.type === protocol.BROADCAST) {
+			error = relay.broadcast(data, sessionObject.getId());
 			reply = replyMessage("Broadcast", false);
 		}
 		else if (data.type === protocol.PUBLISH) {
 			reply = replyMessage("Publish", false);
 		}
 		else if (data.type === protocol.SUBSCRIBE) {
-			reply = replyMessage("Subscribe", false);
+			error = registry.subscribe(sessionObject.getId());
+			reply = replyMessage("Subscribe", error, error);
 		}
 		else {
-			reply = replyMessage("Parse", true, "Could not interpret data");
+			reply = replyMessage("Protocol", true, "Unrecognized type");
 		}
 
 		console.log(reply.message);

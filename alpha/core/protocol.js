@@ -8,11 +8,12 @@
 		BROADCAST: "broadcast",
 		PUBLISH: "publish",
 		SUBSCRIBE: "subscribe",
-		REPLY: "reply",
+		SERVER_ACK: "server_ack",
 
 		SUBSCRIBE_TO: {
 			ONE: "one",
-			CLASS: "class"
+			CLASS: "class",
+			PRESENCE: "presence",
 		},
 
 		isValidData: function(data) {
@@ -43,14 +44,11 @@
 					}
 					return false;
 				case this.SUBSCRIBE:
-					if (data.subscribeTo === this.SUBSCRIBE_TO.CLASS || 
-						data.subscribeTo === this.SUBSCRIBE_TO.ONE &&
-						data.name) {
-
+					if (data.subscribeTo === this.SUBSCRIBE_TO.PRESENCE) {
 						return true;
 					}
 					return false;
-				case this.REPLY:
+				case this.SERVER_ACK:
 					if (data) {
 						return true;
 					}

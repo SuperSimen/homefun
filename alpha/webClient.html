@@ -29,19 +29,28 @@ webSocket.onmessage = function(event) {
 	console.log(event.data);
 }
 webSocket.onopen = function() {
-	var message = {
+	send = function(object) {
+		webSocket.send(JSON.stringify(object) + "\n");
+	};
+	var register = {
 		type: "register",
-		networkName: "dude",
+		networkName: "homefun",
 		className: "browser",
 	}
-	webSocket.send(JSON.stringify(message) + "\n");
-	message = {
-		type: "message",
-		to: "dude",
-		message: "yo",
-	}
-	webSocket.send(JSON.stringify(message) + "\n");
+	send(register);
+
+
+	sendBroadcast = function(message) {
+		var temp = {
+			type: "broadcast",
+			message: message,
+		}
+		send(temp);
+	};
 }
+
+var sendBroadcast;
+var send;
 
 </script>
 </body> 
