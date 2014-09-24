@@ -33,6 +33,7 @@
 			data.className = registry.get(fromId).className;
 
 			var components = registry.getNetwork(from.networkName).getComponents();
+			console.log(components);
 
 			for (var i in components) {
 				registry.get(components[i]).send(data);

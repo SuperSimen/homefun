@@ -9,7 +9,6 @@
 			if (!colorList[className]) {
 				colorList[className] = Object.keys(colorList).length + 1;
 			}
-			console.log(colorList);
 			return "color-" + colorList[className];
 		};
 	});

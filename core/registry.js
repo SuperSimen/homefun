@@ -52,8 +52,9 @@
 				}
 			},
 			removeComponent: function(id) {
-				if (this.components.indexOf(id) != -1) {
-					this.components.slice(this.components.indexOf(id), 1);
+
+				if (this.components.indexOf(id) !== -1) {
+					this.components.splice(this.components.indexOf(id), 1);
 				}
 				else {
 					console.error("cannot remove component");

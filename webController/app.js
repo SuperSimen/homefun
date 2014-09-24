@@ -35,6 +35,7 @@ var app = angular.module('app', ['ui.router']);
 		var devices = {
 			init: function() {
 				socket.addHandler(presenceHandler, "presence");
+				socket.addHandler(broadcastHandler, "broadcast");
 			},
 			list: [],
 			fillList: function(list) {
@@ -47,14 +48,21 @@ var app = angular.module('app', ['ui.router']);
 
 		function presenceHandler(data) {
 			$rootScope.$apply(function() {
-				console.log(data);
 				devices.fillList(data.list);
 			});
 		}
 
+		function broadcastHandler(data) {
+			console.log("received broadcast");
+			console.log(data);
+		}
+
+
 		return devices;
 
 	});
+
+	
 
 	app.factory('socket', function(constants) {
 		var webSocket;
