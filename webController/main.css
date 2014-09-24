@@ -3,8 +3,21 @@ html, body {
 	margin: 0px;
 }
 
+
+
 .fill-height {
 	height: 100%;
+}
+
+.device {
+	text-align: center;
+	font-size: 2em;
+	padding-left: 0px !important;
+	padding-right: 0px !important;
+}
+
+.navbar {
+	border-radius: 0px;
 }
 
 .centre {
@@ -12,3 +25,41 @@ html, body {
 	margin-right: auto;
 	display: block
 }
+
+
+
+
+
+.background-color {
+	background-color: #1B2A50;
+}
+
+.color-1 {
+	background-color: #C34D4B;
+}
+
+.color-2 {
+	background-color: #34499D;
+}
+
+.color-3 {
+	background-color: #B3B7E6;
+}
+
+.color-4 {
+	background-color: #F2D9EC;
+}
+
+.color-5 {
+	background-color: #E7C9ED;
+}
+
+.color-6 {
+	background-color: #C8A3E0;
+}
+
+.color-7 {
+	background-color: #9479D2;
+}
+
+

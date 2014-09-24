@@ -13,9 +13,24 @@
 <script type="text/javascript" src="views/devices/deviceController.js"></script>
 <link href="main.css" rel="stylesheet" type="text/css">
 
-<body> 
+<body class="background-color"> 
 
-<div class="container-fluid fill-height">
+<nav class="navbar navbar-inverse" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">Homefun controller</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="#">Devices</a></li>
+        <li><a href="#">Media</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container fill-height">
 	<div ui-view class="fill-height"></div>
 </div>
 

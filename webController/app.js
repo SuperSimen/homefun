@@ -24,7 +24,7 @@ var app = angular.module('app', ['ui.router']);
 	app.factory('constants', function() {
 		return {
 			networkName: "homefun",
-			className: "webClient",
+			className: "webController",
 			webSocketUrl: "ws://localhost:10012",
 		};
 

@@ -1,3 +1,5 @@
 <div class="row">
-	<div ng-repeat="device in devices"> {{device}} </div>
+	<div ng-repeat="device in devices" class="col-md-3">
+		<div class="jumbotron device" ng-class="getColor(device.className)" >{{device.className}} </div>
+	</div>
 </div>
