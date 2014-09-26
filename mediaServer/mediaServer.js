@@ -25,7 +25,7 @@
 
 		fs.readdir('media', function(err, filesInput) {
 			files = filesInput;
-			broadcastFiles();
+			publishFiles();
 		});
 	}
 
@@ -43,8 +43,14 @@
 
 		send(temp);
 	}
+	function publishFiles() {
+		var temp = {
+			type: "publish",
+			message: files,
+		};
 
-
+		send(temp);
+	}
 
 	function register() {
 		var temp = {
@@ -78,13 +84,8 @@
 	}
 
 	function handleData(data) {
-		if (data.type === "message") {
-			if (data.message === "poll") {
-				console.log("received poll");
-				broadcastFiles();
-			}
+		if (data.type === "poll") {
+			publishFiles();
 		}
 	}
-
-
 })();

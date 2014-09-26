@@ -1,11 +1,13 @@
 (function () {
 	'use strict';
 
+	var protocol = require('./protocol.js');
+
 	var registry = require('./registry.js');
+	registry.importProtocol(protocol);
 
 	var relay = require('./relay.js');
 	relay.importRegistry(registry);
-	var protocol = require('./protocol.js');
 
 	var net = require('net');
 	var socketServer = net.createServer(function (socket) {
@@ -115,40 +117,43 @@
 		}
 
 		return { 
-			type: protocol.SERVER_ACK,
+			type: protocol.TYPE.SERVER_ACK,
 			message: reply,
 		};
 	}
 
 	function handleData (data, sessionObject) {
 
-		var reply;
-		var error;
+		var reply, error, component = registry.get(sessionObject.getId());
 		if (!protocol.isValidData(data)) {
 			reply = replyMessage(data.type, true, "Data did not match protocol");
 		}
-		else if (data.type === protocol.REGISTER) {
+		else if (data.type === protocol.TYPE.REGISTER) {
 			error = registry.register(sessionObject, data.networkName, data.className);
 			reply = replyMessage("Register", error, error);
 			reply.yourId = sessionObject.getId();
 		}
-		else if (data.type === protocol.UNREGISTER) {
+		else if (!registry.get(sessionObject.getId())) {
+			reply = replyMessage(data.type, true, "Not authorized");
+		}
+		else if (data.type === protocol.TYPE.UNREGISTER) {
 			error = registry.deregister(sessionObject);
 			reply = replyMessage("Unregister", error, error);
 		}
-		else if (data.type === protocol.MESSAGE) {
+		else if (data.type === protocol.TYPE.MESSAGE) {
 			error = relay.sendMessage(data, sessionObject.getId());
 			reply = replyMessage("Message", error, error);
 		}
-		else if (data.type === protocol.BROADCAST) {
+		else if (data.type === protocol.TYPE.BROADCAST) {
 			error = relay.broadcast(data, sessionObject.getId());
 			reply = replyMessage("Broadcast", false);
 		}
-		else if (data.type === protocol.PUBLISH) {
+		else if (data.type === protocol.TYPE.PUBLISH) {
+			error = relay.publish(data, sessionObject.getId());
 			reply = replyMessage("Publish", false);
 		}
-		else if (data.type === protocol.SUBSCRIBE) {
-			error = registry.subscribe(sessionObject.getId());
+		else if (data.type === protocol.TYPE.SUBSCRIBE) {
+			error = component.subscribeTo(data.subscribe.to, data.subscribe.value, data.subscribe.type);
 			reply = replyMessage("Subscribe", error, error);
 		}
 		else {

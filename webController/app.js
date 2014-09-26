@@ -16,7 +16,11 @@ var app = angular.module('app', ['ui.router']);
 	});
 
 	app.run( function (socket, $state, devices) {
-		socket.init();
+		socket.init(function() {
+			socket.register();
+			socket.subscribe("presence", "all", "");
+			socket.subscribe("publish", "class", "mediaServer");
+		});
 		devices.init();
 		$state.go("devices");
 	});
@@ -35,7 +39,6 @@ var app = angular.module('app', ['ui.router']);
 		var devices = {
 			init: function() {
 				socket.addHandler(presenceHandler, "presence");
-				socket.addHandler(broadcastHandler, "broadcast");
 			},
 			list: [],
 			fillList: function(list) {
@@ -48,15 +51,9 @@ var app = angular.module('app', ['ui.router']);
 
 		function presenceHandler(data) {
 			$rootScope.$apply(function() {
-				devices.fillList(data.list);
+				devices.fillList(data.presence);
 			});
 		}
-
-		function broadcastHandler(data) {
-			console.log("received broadcast");
-			console.log(data);
-		}
-
 
 		return devices;
 
@@ -68,17 +65,14 @@ var app = angular.module('app', ['ui.router']);
 		var webSocket;
 
 		var socket = {
-			init: function() {
+			init: function(callback) {
 				webSocket = new WebSocket(constants.webSocketUrl);
 
 				webSocket.onmessage = function(event) {
 					messageHandlers.mainHandler(event.data);
 				};
 
-				webSocket.onopen = function() {
-					register();
-					subscribe();
-				};
+				webSocket.onopen = callback;
 			}
 		};
 
@@ -103,7 +97,7 @@ var app = angular.module('app', ['ui.router']);
 								return;
 							}
 							else {
-								//console.log(message);
+								console.log(message);
 							}
 						}
 					}
@@ -119,21 +113,26 @@ var app = angular.module('app', ['ui.router']);
 			messageHandlers.addHandler(handler, type);
 		};
 
-		function register() {
+		socket.register = function() {
 			var temp = {
 				type: "register",
 				networkName: constants.networkName,
 				className: constants.className,
 			};
 			send(temp);
-		}
-		function subscribe() {
+		};
+
+		socket.subscribe = function(type, to, value) {
 			var temp = {
 				type: "subscribe",
-				subscribeTo: "presence"
+				subscribe: {
+					type: type,
+					to: to,
+					value: value,
+				}
 			};
 			send(temp);
-		}
+		};
 
 		function send(object) {
 			webSocket.send(JSON.stringify(object) + "\n");

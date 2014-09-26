@@ -33,49 +33,26 @@
 			data.className = registry.get(fromId).className;
 
 			var components = registry.getNetwork(from.networkName).getComponents();
-			console.log(components);
 
 			for (var i in components) {
 				registry.get(components[i]).send(data);
 			} 
-		}
-	};
-
-	function newSubscription() {
-		return {
-			list: {},
-			
-			addSubscriber: function (subscriberId) {
-				if (!this.list[subscriberId]) {
-
-				}
-			},
-			subscriptionId: subscriptionId,
-		};
-	
-	}
-
-	var subscriptions = {
-		list: {},
-		addSubscription: function (subscriptionId, subscriberId) {
-			if (this.list[subscriptionId]) {
-				this.list[subscriptionId].addSubscriber(subscriberId);
-			}
-			else {
-				this.list[subscriptionId] = newSubscription();
-			}
-			
 		},
-		get: function(subscriptionId) {
-			if (this.list[subscriptionId]) {
-				return this.list[subscriptionId];
+		publish: function(data, fromId) {
+			var component = registry.get(fromId);
+			if (!component) {
+				return "Not registered. Not allowed to send messages";
 			}
-			else {
-				return [];
-			}
-		},
 
-	
+			data.from = component.name;
+			data.fromId = fromId;
+			data.className = component.className;
+
+			var network = registry.getNetwork(component.networkName);
+
+			network.subscribers.broadcastPublishMessage(data);
+			network.getClass(component.className).subscribers.broadcastPublishMessage(data);
+		},
 	};
 
 
