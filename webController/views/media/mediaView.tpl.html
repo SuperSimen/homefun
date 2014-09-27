@@ -1,0 +1,7 @@
+<div class="row">
+	<div ng-repeat="media in getMedia()" class="col-md-3">
+		<div class="pointer" ng-click="play(media)">
+			<img ng-src="{{getPoster(media.title)}}" ng-click="play(media)"/>
+	   	</div>
+	</div>
+</div>
