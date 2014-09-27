@@ -8,8 +8,18 @@ html, body {
 .fill-height {
 	height: 100%;
 }
+.fill-height-under-navbar {
+	height: calc(100% - 72px);
+}
 
 .device {
+	text-align: center;
+	font-size: 2em;
+	padding-left: 0px !important;
+	padding-right: 0px !important;
+}
+
+.media {
 	text-align: center;
 	font-size: 2em;
 	padding-left: 0px !important;
@@ -26,7 +36,13 @@ html, body {
 	display: block
 }
 
+.pointer {
+	cursor: pointer;
+}
 
+.playing-video {
+	width: 100%;
+}
 
 
 

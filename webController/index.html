@@ -1,38 +1,42 @@
 <!DOCTYPE html> 
-<html ng-app="app">
+<html ng-app="app" ng-controller="appController">
 <head>
-</head>
 
 <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css" />
-
-<script src="../bower_components/angular/angular.js"></script>
-<script src="../bower_components/angular-ui-router/release/angular-ui-router.js"></script>
-
-
-<script type="text/javascript" src="app.js"></script>
-<script type="text/javascript" src="views/devices/deviceController.js"></script>
 <link href="main.css" rel="stylesheet" type="text/css">
+
+</head>
 
 <body class="background-color"> 
 
-<nav class="navbar navbar-inverse" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="#">Homefun controller</a>
-    </div>
+	<nav class="navbar navbar-inverse" role="navigation">
+	  <div class="container">
+		<div class="navbar-header">
+		  <a class="navbar-brand" href="#">Homefun controller</a>
+		</div>
 
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav">
-        <li class="active"><a href="#">Devices</a></li>
-        <li><a href="#">Media</a></li>
-      </ul>
-    </div>
-  </div>
-</nav>
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+		  <ul class="nav navbar-nav">
+			<li ng-class="isActive('devices') ? 'active' : ''"><a href ng-click="goTo('devices')" >Devices</a></li>
+			<li ng-class="isActive('media') ? 'active' : ''"><a href ng-click="goTo('media')" ng-class="isActive('media')">Media</a></li>
+		  </ul>
+		</div>
+	  </div>
+	</nav>
 
-<div class="container fill-height">
-	<div ui-view class="fill-height"></div>
-</div>
+	<div class="container fill-height-under-navbar">
+		<div ui-view class="fill-height"></div>
+	</div>
+
+
+	<script src="../bower_components/angular/angular.js"></script>
+	<script src="../bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+
+
+	<script type="text/javascript" src="app.js"></script>
+	<script type="text/javascript" src="views/devices/devices.js"></script>
+	<script type="text/javascript" src="views/media/media.js"></script>
+
 
 
 </body> 

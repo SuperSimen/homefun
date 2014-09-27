@@ -6,9 +6,6 @@
 	var registry = require('./registry.js');
 	registry.importProtocol(protocol);
 
-	var relay = require('./relay.js');
-	relay.importRegistry(registry);
-
 	var net = require('net');
 	var socketServer = net.createServer(function (socket) {
 		socket.setEncoding('utf8');
@@ -118,6 +115,7 @@
 
 		return { 
 			type: protocol.TYPE.SERVER_ACK,
+			value: type,
 			message: reply,
 		};
 	}
@@ -130,31 +128,31 @@
 		}
 		else if (data.type === protocol.TYPE.REGISTER) {
 			error = registry.register(sessionObject, data.networkName, data.className);
-			reply = replyMessage("Register", error, error);
-			reply.yourId = sessionObject.getId();
+			reply = replyMessage(data.type, error, error);
+			reply.yourIp = sessionObject.remoteAddress;
 		}
 		else if (!registry.get(sessionObject.getId())) {
 			reply = replyMessage(data.type, true, "Not authorized");
 		}
 		else if (data.type === protocol.TYPE.UNREGISTER) {
 			error = registry.deregister(sessionObject);
-			reply = replyMessage("Unregister", error, error);
+			reply = replyMessage(data.type, error, error);
 		}
 		else if (data.type === protocol.TYPE.MESSAGE) {
-			error = relay.sendMessage(data, sessionObject.getId());
-			reply = replyMessage("Message", error, error);
+			error = relay.sendMessage(data.message, data.to, sessionObject.getId());
+			reply = replyMessage(data.type, error, error);
 		}
 		else if (data.type === protocol.TYPE.BROADCAST) {
-			error = relay.broadcast(data, sessionObject.getId());
-			reply = replyMessage("Broadcast", false);
+			error = relay.broadcast(data.message, sessionObject.getId());
+			reply = replyMessage(data.type, false);
 		}
 		else if (data.type === protocol.TYPE.PUBLISH) {
-			error = relay.publish(data, sessionObject.getId());
-			reply = replyMessage("Publish", false);
+			error = relay.publish(data.message, sessionObject.getId());
+			reply = replyMessage(data.type, error, error);
 		}
 		else if (data.type === protocol.TYPE.SUBSCRIBE) {
 			error = component.subscribeTo(data.subscribe.to, data.subscribe.value, data.subscribe.type);
-			reply = replyMessage("Subscribe", error, error);
+			reply = replyMessage(data.type, error, error);
 		}
 		else {
 			reply = replyMessage("Protocol", true, "Unrecognized type");
@@ -162,4 +160,65 @@
 
 		sessionObject.send(reply);
 	}
+
+	var relay = {
+		sendMessage: function(message, toId, fromId) {
+			var from = registry.get(fromId);
+			if (from) {
+				return "Not registered. Not allowed to send messages";
+			}
+			var to = registry.get(toId);
+			if (to) {
+				return "Receiver id is invalid";
+			}
+
+			var tempMessage = {
+				type: protocol.TYPE.MESSAGE,
+				from: from.name,
+				fromId: fromId,
+				className: from.className,
+				message: message,
+			};
+
+			to.send(tempMessage);
+		},
+		broadcast: function(message, fromId) {
+			var from = registry.get(fromId);
+			if (from) {
+				return "Not registered. Not allowed to broadcast";
+			}
+
+			var broadcastMessage = {
+				type: protocol.TYPE.BROADCAST,
+				from: from.name,
+				fromId: fromId,
+				className: from.className,
+				message: message,
+			};
+
+			registry.getNetwork(from.networkName).broadcast(broadcastMessage);
+		},
+		publish: function(message, fromId) {
+			var from = registry.get(fromId);
+			if (!from) {
+				return "Not registered. Not allowed to send messages";
+			}
+
+			var publishMessage = {
+				type: protocol.TYPE.PUBLISH,
+				from: from.name,
+				fromId: fromId,
+				className: from.className,
+				message: message,
+			};
+
+			var network = registry.getNetwork(from.networkName);
+
+			network.subscribers.broadcastPublishMessage(publishMessage);
+			network.getClass(from.className).subscribers.broadcastPublishMessage(publishMessage);
+
+		},
+	};
+
+
 })();
