@@ -127,7 +127,7 @@
 			reply = replyMessage(data.type, true, "Data did not match protocol");
 		}
 		else if (data.type === protocol.TYPE.REGISTER) {
-			error = registry.register(sessionObject, data.networkName, data.className);
+			error = registry.register(sessionObject, data.networkName, data.className, data.name);
 			reply = replyMessage(data.type, error, error);
 			reply.yourIp = sessionObject.remoteAddress;
 		}

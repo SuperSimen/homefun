@@ -178,7 +178,7 @@
 		importProtocol: function(protocolImport) {
 			protocol = protocolImport;
 		},
-		register: function(sessionObject, networkName, className) {
+		register: function(sessionObject, networkName, className, name) {
 			var id = sessionObject.getId();
 			if (components.list[id]) {
 				return "register impossible, id not unique"; 
@@ -190,13 +190,13 @@
 					remoteAddress: sessionObject.remoteAddress,
 					remotePort: sessionObject.remotePort,
 					id: id,
-					name: "",
+					name: name,
 					className: className,
 					networkName: networkName,
 					subscribeTo: function(to, value, type) {
 						var poll = {
 							type: protocol.TYPE.POLL,
-						}
+						};
 						if (to === protocol.SUBSCRIBE.TO.ALL) {
 							networks.get(this.networkName).subscribers.subscribe(this.id, type);
 

@@ -1,47 +1,23 @@
 <!DOCTYPE html> 
-<html> 
+<html ng-app="app" ng-controller="appController">
 <head>
-	<style>
-		html, body {
-			height: 100%;
-			background-color: black;
-			margin: 0px;
-		}
 
-		.centre {
-			margin-left: auto;
-			margin-right: auto;
-			display: block
-		}
-	</style>
+<link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css" />
+<link href="main.css" rel="stylesheet" type="text/css">
+
 </head>
 
 <body> 
 
-<video id="yeah" class="centre" height="100%" muted>
-	<!-- <source src="http://videos.hd-trailers.net/TheHungerGames_MockingjayPart1_Trailer_TheMockingjayLives-1080p-HDTN.mp4"> --!>
-</video>
+	<div ui-view class="fill-height"></div>
 
-<script>
+	<script src="../bower_components/angular/angular.js"></script>
+	<script src="../bower_components/angular-ui-router/release/angular-ui-router.js"></script>
 
-var webSocket = new WebSocket("ws://localhost:10012")
-webSocket.onmessage = function(event) {
-	console.log(event.data);
-}
-webSocket.onopen = function() {
-	function send(object) {
-		webSocket.send(JSON.stringify(object) + "\n");
-	};
-	var register = {
-		type: "register",
-		networkName: "homefun",
-		className: "webClient",
-	}
-	send(register);
+	<script type="text/javascript" src="app.js"></script>
+	<script type="text/javascript" src="views/player/player.js"></script>
+	<script type="text/javascript" src="views/welcome/welcome.js"></script>
 
-}
-
-</script>
 </body> 
 </html>
 

@@ -1,5 +1,15 @@
 <div class="row">
 	<div ng-repeat="device in devices" class="col-md-3">
-		<div class="jumbotron device" ng-class="getColor(device.className)" >{{device.className + "\n" + device.id}} </div>
+		<div class="jumbotron device" ng-class="getColor(device.className)" >
+			{{device.className}}
+			<div ng-show="device.name">
+				{{device.name}}
+			</div>
+			<div ng-hide="device.name">
+				{{device.id}}
+			</div>
+
+
+		</div>
 	</div>
 </div>
