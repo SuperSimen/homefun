@@ -24,11 +24,13 @@ html, body {
 	font-size: 2em;
 	padding-left: 0px !important;
 	padding-right: 0px !important;
+	height: 445px;
 }
 
-.navbar {
-	border-radius: 0px;
+.no-border {
+	border-radius: 0px !important;
 }
+
 
 .centre {
 	margin-left: auto;
@@ -43,7 +45,6 @@ html, body {
 .playing-video {
 	width: 100%;
 }
-
 
 
 .background-color {

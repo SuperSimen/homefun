@@ -1,7 +1,11 @@
-<div class="row">
-	<div ng-repeat="media in getMedia()" class="col-md-3">
-		<div class="pointer" ng-click="play(media)">
-			<img ng-src="{{getPoster(media.title)}}" ng-click="play(media)"/>
-	   	</div>
+
+<div ng-repeat="mediaRow in (getMedia().length/4 | array)" class="row">
+	<div ng-repeat="media in getMedia().slice(4*$index, 4*$index + 4)">
+		<div class="pointer col-md-3 media" ng-click="play(media)">
+			<div ng-if="getPoster(media.title) === -1" class="jumbotron fill-height no-border" ng-class="getRandomColor(media.title)" >
+				{{media.title}}
+			</div>
+			<img ng-if="getPoster(media.title) !== -1" ng-src="{{getPoster(media.title)}}" ng-click="play(media)"/>
+		</div>
 	</div>
 </div>

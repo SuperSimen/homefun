@@ -30,7 +30,7 @@
 
 		register();
 
-		var watcher = chokidar.watch('mediaServer/media', {ignored: /^\./, persistent: true});
+		var watcher = chokidar.watch('media', {ignored: /^\./, persistent: true});
 		function getFileName(path) {
 			return path.substring(path.lastIndexOf('/') + 1);
 		}
@@ -44,9 +44,10 @@
 		});
 		watcher.on('unlink', function(path) {
 			var filename = getFileName(path);
-			files.splice(files.indexOf(getFileName(path),1));
+			files.splice(files.indexOf(getFileName(path)),1);
 			publishFiles();
 		});
+		
 	}
 
 
@@ -59,6 +60,7 @@
 			type: "broadcast",
 			message: files,
 		};
+
 
 		send(temp);
 	}
