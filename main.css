@@ -20,6 +20,11 @@ html, body {
 	font-size: 2em;
 }
 
+.control-bar {
+	display: inline-table;
+	width: 100%;
+}
+
 
 .device {
 	height: 200px;

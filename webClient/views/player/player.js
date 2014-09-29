@@ -5,51 +5,163 @@
 		var player = {
 			init: function() {
 				socket.addHandler(messageHandler, "message");
+				$rootScope.player = {};
 				$rootScope.$watch(
-					function() {return $rootScope.playing;},
+					function() {return $rootScope.player.source;},
 					function(newValue) {
-						console.log(newValue);
 						if (newValue) {
 							$state.go("player", {}, {reload: true});
 						}
 						else {
 							$state.go("welcome");
 						}
-					},
-					true
+					}
 				);
 			}
 		};
 
 		function messageHandler(data) {
 			var command = data.message;
+			var reply = {
+				type: 'command-reply',
+				command: command.type,
+			};
 			if (!command.type) {
-				return console.log("invalid message");
+				reply.error = 'invalid message';
+			}
+			else if (command.type === 'load') {
+				if ($rootScope.player.master) {
+					reply.error = "I'm already taken";
+				}
+				else if (command.path) {
+					$rootScope.player.source = $sce.trustAsResourceUrl(command.path);
+					$rootScope.player.title = command.title;
+					$rootScope.player.master = data.fromId;
+
+					reply.title = command.title;
+				}
+				else {
+					reply.error = "Cannot complete load command";
+				}
+			}
+			else if ($rootScope.player.master !== data.fromId) {
+				reply.error = 'you cannot control me';
 			}
 			else if (command.type === "play") {
-				$rootScope.$apply(function() {
-					$rootScope.playing = {
-						title: command.title,
-						path: $sce.trustAsResourceUrl(command.path),
-					};
-				});
-				socket.sendMessage({status: "playing"}, data.fromId);
+
+			}
+			else if (command.type === 'pause') {
+
 			}
 			else if (command.type === "stop") {
-				$rootScope.$apply(function() {
-					$rootScope.playing = null;
-				});
-				socket.sendMessage({status: "stopped"}, data.fromId);
+				$rootScope.player.source = "";
+				$rootScope.player.title = "";
+				$rootScope.player.master = "";
+				$rootScope.player.currentTime = 0;
+				$rootScope.player.duration = 0;
+			}
+			else if (command.type === "go-to") {
+				$rootScope.player.goToTime = command.time;
 			}
 			else {
-				console.log("unrecognized message type");
+				reply.error = 'unrecognized command';
 			}
+
+			if (!reply.error) {
+				$rootScope.$apply(function() {
+					$rootScope.player.command = command.type;
+				});
+			}
+
+			socket.sendMessage(reply, data.fromId);
 		}
 
 		return player;
 
 	});
 
-	app.controller('playerController', function($scope) {
+	app.directive("hfControl", function($timeout, $state) { 
+		function link (scope, element, attrs) {
+			scope.$watch(
+				function() {return scope.control.command;},
+				function(command) {
+					if (command === 'play') {
+						element[0].play();
+					}
+					else if (command === 'pause') {
+						element[0].pause();
+					}
+					else if (command === 'go-to') {
+						console.log('go-to');
+					}
+					//element.prop('muted', newValue);
+				}
+			);
+
+			element[0].addEventListener('loadedmetadata', updateCurrentTime);
+
+			function updateCurrentTime () {
+				if ($state.current.name === 'player') {
+					scope.$apply(function() {
+						scope.control.currentTime = element[0].currentTime;
+						if (scope.control.duration !== element[0].duration) {
+							scope.control.duration = element[0].duration;
+						}
+					});
+
+					$timeout(updateCurrentTime, 1000);
+				}
+			}
+		}
+
+		return {
+			link: link,
+			scope: {
+				control: '='
+			}
+		};
+	});
+
+	app.directive("hfVideoResize", function() {
+		
+		var e = null;
+		
+		function resize() {
+			
+			var max_scale = Math.min(
+				window.innerWidth / e.videoWidth, 
+				window.innerHeight / e.videoHeight
+			);
+
+			e.style.width = e.width = max_scale * e.videoWidth;
+			e.style.width = e.height = max_scale * e.videoHeight;
+		}
+		
+		return {
+			compile: function(element) {
+				e = element[0];
+				window.addEventListener('resize', resize);
+				e.addEventListener('loadedmetadata', resize);
+			},
+			link: function(scope, element) {
+				scope.on('$destroy', function() {
+					element[0].removeEventListener('resize', resize);
+				});
+			}
+		};
+	});
+
+	app.controller('playerController', function($scope, socket) {
+		$scope.$watch(
+			function() {return $scope.player.currentTime;},
+			function(currentTime) {
+				var timeUpdate = {
+					currentTime: currentTime,
+					duration: $scope.player.duration,
+					type: 'time-update'
+				};
+				socket.sendMessage(timeUpdate, $scope.player.master);
+			}
+		);
 	});
 })();

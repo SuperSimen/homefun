@@ -1,31 +1,13 @@
 (function() {
 	'use strict';
-	app.factory('media', function($rootScope, socket, $sce, $http, devices) {
+	app.factory('media', function($rootScope, socket, $sce, $http, devices, utility) {
 
-		function getParameterFromFilename(filename, parameterName) {
-			var parameters, parameterValue;
-			if (filename.indexOf('&') !== -1) {
-				parameters = filename.substring(filename.indexOf('&') + 1);
-
-				var indexOfParameter = filename.indexOf('&' + parameterName);
-				if (indexOfParameter !== -1) {
-					parameterValue = parameters.substring(indexOfParameter + 2);
-					if (parameterValue.indexOf('&') !== -1) {
-						parameterValue = parameterValue.substring(0, parameterValue.indexOf('&'));
-					}
-					else if (parameterValue.indexOf('.') !== -1) {
-						parameterValue = parameterValue.substring(0, parameterValue.indexOf('.'));
-					}
-				}
-			}
-			return parameterValue;
-		}
 
 		var posters = {
 			list: {},
 			get: function(filename) {
-				var title = getParameterFromFilename(filename, 't');
-				var year = getParameterFromFilename(filename, 'y');
+				var title = utility.getParameterFromFilename(filename, 't');
+				var year = utility.getParameterFromFilename(filename, 'y');
 				if (this.list[filename] === undefined) {
 					this.list[filename] = "";
 					if (title) {
@@ -141,7 +123,7 @@
 				$scope.goTo("playing");
 			}
 			else if ($scope.isActive("devices")) {
-				$scope.control('play', media);
+				$scope.control('load', media);
 			}
 		};
 
@@ -159,5 +141,30 @@
 			return color;
 		};
 
+	});
+
+	app.factory('utility', function() {
+		var utility = {};
+
+		utility.getParameterFromFilename = function(filename, parameterName) {
+			var parameters, parameterValue;
+			if (filename.indexOf('&') !== -1) {
+				parameters = filename.substring(filename.indexOf('&') + 1);
+
+				var indexOfParameter = filename.indexOf('&' + parameterName);
+				if (indexOfParameter !== -1) {
+					parameterValue = parameters.substring(indexOfParameter + 2);
+					if (parameterValue.indexOf('&') !== -1) {
+						parameterValue = parameterValue.substring(0, parameterValue.indexOf('&'));
+					}
+					else if (parameterValue.indexOf('.') !== -1) {
+						parameterValue = parameterValue.substring(0, parameterValue.indexOf('.'));
+					}
+				}
+			}
+			return parameterValue;
+		};
+
+		return utility;
 	});
 })();

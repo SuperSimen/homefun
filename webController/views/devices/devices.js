@@ -2,7 +2,7 @@
 
 	'use strict';
 
-	app.factory('devices', function($rootScope, socket) {
+	app.factory('devices', function($rootScope, socket, utility) {
 
 		var devices = {
 			init: function() {
@@ -52,13 +52,35 @@
 		}
 
 		function messageHandler(data) {
-			console.log(data);
 			var message = data.message;
-			$rootScope.$apply(function() {
-				if (message.status === "playing" || message.status === "stopped" || message.status === "paused") {
-					devices.get(data.fromId).status = message.status;
+			var device = devices.get(data.fromId);
+			if (message.type === "command-reply") {
+				if (message.error) {
+					console.log('Error from ' + data.fromId + ' - ' + message.error);
 				}
-			});
+				else {
+					$rootScope.$apply(function() {
+						device.command = message.command;
+						if (message.command === 'load') {
+							device.title = utility.getParameterFromFilename(message.title, 't');
+						}
+						if (message.command === 'stop') {
+							device.title = "";
+							device.currentTime = 0;
+						}
+					});
+				}
+			}
+			if (message.type === "time-update") {
+				if (device.command !== 'stop') {
+					$rootScope.$apply(function() {
+						device.currentTime = message.currentTime;
+						if (device.duration !== message.duration) {
+							device.duration = message.duration;
+						}
+					});
+				}
+			}
 		}
 
 		return devices;
@@ -111,18 +133,21 @@
 		};
 
 		$scope.showControl = function(control) {
+			var command = $scope.activeDevice.command;
 			if (!$scope.activeDevice) {
 				return false;
 			}
 			else if (control === 'play') {
-				return false;
+				return command === "pause";
 			}
 			else if (control === 'pause') {
-				return false;
+				return command === "play" || command === "load";
 			}
 			else if (control === 'stop') {
-				console.log($scope.activeDevice);
-				return $scope.activeDevice.status === "playing";
+				return command === "pause" || command === "load" || command === 'play';
+			}
+			else if (control === 'bar') {
+				return command === "pause" || command === "load" || command === 'play';
 			}
 			else {
 				return false;
@@ -136,11 +161,28 @@
 			var message = {
 				type: command
 			};
-			if (media) {
+			if (command === 'load' && media) {
 				message.title = media.title;
 				message.path = media.path.$$unwrapTrustedValue();
 			}
 			socket.sendMessage(message, $scope.activeDevice.id);
 		};
 	});
+
+	app.directive('hfProgressBar', function () {
+		function link(scope, element, attr) {
+			scope.$watch(
+				function() {return scope.activeDevice.currentTime;}, 
+				function(newValue) {
+					var width = newValue / scope.activeDevice.duration * 100;
+					element.css({'width' : width + "%"});
+				}
+			);
+		}
+
+		return {
+			link: link,
+		};
+	});
+
 })();

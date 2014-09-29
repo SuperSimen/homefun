@@ -78,7 +78,7 @@ var app = angular.module('app', ['ui.router']);
 								return;
 							}
 							else {
-								console.log(message);
+								//console.log(message);
 							}
 						}
 					}
