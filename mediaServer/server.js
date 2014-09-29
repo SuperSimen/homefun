@@ -2,7 +2,7 @@
 	'use strict';
 
 	var net = require('net');
-	var socket = net.connect(10011, 'owesen-lein.no');
+	var socket = net.connect(10011, '192.168.1.128');
 
 	var express = require('express');
 	var app = express();

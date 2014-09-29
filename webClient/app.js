@@ -36,7 +36,7 @@ var app = angular.module('app', ['ui.router']);
 		return {
 			networkName: "homefun",
 			className: "webClient",
-			webSocketUrl: "ws://owesen-lein:10012",
+			webSocketUrl: "ws://192.168.1.128:10012",
 		};
 
 	});
