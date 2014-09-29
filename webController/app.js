@@ -25,9 +25,13 @@ var app = angular.module('app', ['ui.router']);
 	});
 
 	app.config( function ( $stateProvider) {
-		$stateProvider.state('devices', {
+		$stateProvider.state('baseDevices', {
 			controller: "deviceController",
 			templateUrl: "views/devices/deviceView.tpl.html"
+		}).state('devices', {
+			parent: 'baseDevices',
+			controller: "mediaController",
+			templateUrl: "views/media/mediaView.tpl.html"
 		}).state('media', {
 			controller: "mediaController",
 			templateUrl: "views/media/mediaView.tpl.html"
@@ -43,7 +47,7 @@ var app = angular.module('app', ['ui.router']);
 			devices.init();
 			media.init();
 		});
-		$state.go("media");
+		$state.go("devices");
 	});
 
 	app.factory('constants', function() {

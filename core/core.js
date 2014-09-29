@@ -164,11 +164,11 @@
 	var relay = {
 		sendMessage: function(message, toId, fromId) {
 			var from = registry.get(fromId);
-			if (from) {
+			if (!from) {
 				return "Not registered. Not allowed to send messages";
 			}
 			var to = registry.get(toId);
-			if (to) {
+			if (!to) {
 				return "Receiver id is invalid";
 			}
 
@@ -184,7 +184,7 @@
 		},
 		broadcast: function(message, fromId) {
 			var from = registry.get(fromId);
-			if (from) {
+			if (!from) {
 				return "Not registered. Not allowed to broadcast";
 			}
 
@@ -201,7 +201,7 @@
 		publish: function(message, fromId) {
 			var from = registry.get(fromId);
 			if (!from) {
-				return "Not registered. Not allowed to send messages";
+				return "Not registered. Not allowed to send publish";
 			}
 
 			var publishMessage = {

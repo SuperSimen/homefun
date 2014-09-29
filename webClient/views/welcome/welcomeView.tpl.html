@@ -1,11 +1,11 @@
 <div class="container">
 	<div class="row fill-height" style="color: white;">
 		<div class="col-md-12 fill-height">
-			<input ng-show="!isNameSet" type="text" ng-model="name" class="form-control center-vertical" ng-keydown="nameKeyDown($event)">
-			<div ng-if="isNameSet" class="fill-height">
+			<input ng-show="!values.isNameSet" type="text" ng-model="values.name" class="form-control center-vertical" ng-keydown="nameKeyDown($event)">
+			<div ng-if="values.isNameSet" class="fill-height">
 				<div class="center-vertical">
 					<h1 class="align-center">
-						Welcome {{name}}!
+						Welcome {{values.name}}!
 					</h1>
 				</div>
 			</div>

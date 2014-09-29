@@ -23,11 +23,13 @@ var app = angular.module('app', ['ui.router']);
 		});
 	});
 
-	app.run( function (socket, $state, player) {
+	app.run( function (socket, $state, player, welcome) {
 		socket.init(function() {
+			//socket.register();
+			welcome.init();
 			player.init();
 		});
-		$state.go("player");
+		$state.go("welcome");
 	});
 
 	app.factory('constants', function() {

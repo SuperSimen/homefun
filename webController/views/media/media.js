@@ -42,6 +42,8 @@
 							else {
 								posters.list[filename] = -1;
 							}
+						}).error(function(data) {
+							console.error(data);
 						});
 					}
 					else {
@@ -58,7 +60,6 @@
 				$rootScope.$watch(
 					function() {return devices.list;},
 					function(newValue) {
-						console.log(newValue);
 						media.updateServers(newValue);
 					},
 					true
@@ -80,6 +81,7 @@
 									title: list[i],
 									path: $sce.trustAsResourceUrl(this.path + "/" + list[i]),
 								});
+								posters.get(list[i]);
 							}
 						}
 					};
@@ -115,7 +117,6 @@
 		};
 
 		function publishHandler(data) {
-			console.log(data);
 			$rootScope.$apply(function() {
 				var server = media.getServer(data.fromId);
 				if (!server) {
@@ -129,15 +130,21 @@
 
 	});
 
-	app.controller('mediaController', function($scope, media, $rootScope) {
+	app.controller('mediaController', function($scope, media, $rootScope, socket) {
 		$scope.getMedia = function() {
 			return media.getMedia();
 		};
 
 		$scope.play = function(media) {
-			$rootScope.playing = media;
-			$scope.goTo("playing");
+			if ($scope.isActive("media")) {
+				$rootScope.playing = media;
+				$scope.goTo("playing");
+			}
+			else if ($scope.isActive("devices")) {
+				$scope.control('play', media);
+			}
 		};
+
 
 		$scope.getPoster = media.getPoster;
 
@@ -149,7 +156,6 @@
 			}
 			var color =  "color-" + colorList[id];
 
-			console.log(color);
 			return color;
 		};
 
