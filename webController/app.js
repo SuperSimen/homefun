@@ -54,7 +54,7 @@ var app = angular.module('app', ['ui.router']);
 		return {
 			networkName: "homefun",
 			className: "webController",
-			webSocketUrl: "ws://localhost:10012",
+			webSocketUrl: "ws://owesen-lein.no:10012",
 		};
 
 	});
