@@ -18,7 +18,7 @@
 			<span class="glyphicon glyphicon-play pointer" ng-click="control('play')" ng-show="showControl('play')"></span>
 			<span class="glyphicon glyphicon-pause pointer" ng-click="control('pause')" ng-show="showControl('pause')"></span>
 			<span class="glyphicon glyphicon-stop pointer" ng-click="control('stop')" ng-show="showControl('stop')"></span>
-			<div class="progress control-bar" ng-show="showControl('bar')">
+			<div class="progress control-bar pointer" hf-click-bar ng-show="showControl('bar')" ng-click="clickOnBar($event, $element)">
 				<div class="progress-bar" hf-progress-bar></div>
 			</div>
 		</div>

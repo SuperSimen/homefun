@@ -60,13 +60,20 @@
 				}
 				else {
 					$rootScope.$apply(function() {
-						device.command = message.command;
 						if (message.command === 'load') {
+							device.command = 'play';
 							device.title = utility.getParameterFromFilename(message.title, 't');
 						}
-						if (message.command === 'stop') {
+						else if (message.command === 'stop') {
+							device.command = 'stop';
 							device.title = "";
 							device.currentTime = 0;
+						}
+						else if (message.command === 'pause') {
+							device.command = 'pause';
+						}
+						else if (message.command === 'play') {
+							device.command = 'play';
 						}
 					});
 				}
@@ -165,8 +172,12 @@
 				message.title = media.title;
 				message.path = media.path.$$unwrapTrustedValue();
 			}
+			else if (command === 'go-to' && $scope.activeDevice.goToTime) {
+				message.goToTime = $scope.activeDevice.goToTime;
+			}
 			socket.sendMessage(message, $scope.activeDevice.id);
 		};
+
 	});
 
 	app.directive('hfProgressBar', function () {
@@ -178,6 +189,19 @@
 					element.css({'width' : width + "%"});
 				}
 			);
+		}
+
+		return {
+			link: link,
+		};
+	});
+	app.directive('hfClickBar', function () {
+		function link(scope, element, attr) {
+
+			element.on('click', function(event) {
+				scope.activeDevice.goToTime = event.offsetX / element[0].offsetWidth * scope.activeDevice.duration;
+				scope.control('go-to');
+			});
 		}
 
 		return {

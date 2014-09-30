@@ -4,7 +4,10 @@
 			<div ng-if="getPoster(media.title) === -1" class="jumbotron fill-height no-border" ng-class="getRandomColor(media.title)" >
 				{{media.title}}
 			</div>
-			<img ng-if="getPoster(media.title) !== -1" ng-src="{{getPoster(media.title)}}">
+			<div ng-if="getPoster(media.title) !== -1">
+				<img ng-src="{{getPoster(media.title)}}"/>
+				
+			</div>
 		</div>
 	</div>
 </div>

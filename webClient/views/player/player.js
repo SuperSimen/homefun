@@ -61,7 +61,7 @@
 				$rootScope.player.duration = 0;
 			}
 			else if (command.type === "go-to") {
-				$rootScope.player.goToTime = command.time;
+				$rootScope.player.goToTime = command.goToTime;
 			}
 			else {
 				reply.error = 'unrecognized command';
@@ -91,10 +91,15 @@
 					else if (command === 'pause') {
 						element[0].pause();
 					}
-					else if (command === 'go-to') {
-						console.log('go-to');
+				}
+			);
+
+			scope.$watch(
+				function() {return scope.control.goToTime;},
+				function(time) {
+					if (time >= 0) {
+						element[0].currentTime = time;
 					}
-					//element.prop('muted', newValue);
 				}
 			);
 
@@ -109,7 +114,7 @@
 						}
 					});
 
-					$timeout(updateCurrentTime, 1000);
+					$timeout(updateCurrentTime, 500);
 				}
 			}
 		}
@@ -160,6 +165,8 @@
 					duration: $scope.player.duration,
 					type: 'time-update'
 				};
+				console.log('sending time update');
+				console.log(timeUpdate);
 				socket.sendMessage(timeUpdate, $scope.player.master);
 			}
 		);
