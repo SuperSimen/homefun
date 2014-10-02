@@ -13,13 +13,13 @@
 
 	});
 
-	app.controller('welcomeController', function(socket, $rootScope, $scope) {
+	app.controller('welcomeController', function($rootScope, $scope) {
 
 
 		$scope.nameKeyDown = function(event) {
 			if (event.keyCode === 13 && $scope.values.name) {
 				$scope.values.isNameSet = true;
-				socket.register($scope.values.name);
+				//socket.register($scope.values.name);
 			}
 		};
 	});

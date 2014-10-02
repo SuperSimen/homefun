@@ -2,13 +2,13 @@
 
 	'use strict';
 
-	app.factory('devices', function($rootScope, socket, utility) {
+	app.factory('devices', function($rootScope, coral, utility) {
 
 		var devices = {
 			init: function() {
-				socket.addHandler(presenceHandler, "presence");
-				socket.addHandler(messageHandler, "message");
-				socket.subscribe("presence", "all", "");
+				coral.addHandler(presenceHandler, "presence");
+				coral.addHandler(messageHandler, "message");
+				coral.subscribe("presence", "all", "");
 
 			},
 			list: [],
@@ -94,7 +94,7 @@
 
 	});
 
-	app.controller('deviceController', function($scope, devices, socket) {
+	app.controller('deviceController', function($scope, devices, coral) {
 		$scope.devices = devices.list;
 
 		var colorList = {};
@@ -175,7 +175,7 @@
 			else if (command === 'go-to' && $scope.activeDevice.goToTime) {
 				message.goToTime = $scope.activeDevice.goToTime;
 			}
-			socket.sendMessage(message, $scope.activeDevice.id);
+			coral.sendMessage(message, $scope.activeDevice.id);
 		};
 
 	});

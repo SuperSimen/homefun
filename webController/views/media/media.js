@@ -1,6 +1,6 @@
 (function() {
 	'use strict';
-	app.factory('media', function($rootScope, socket, $sce, $http, devices, utility) {
+	app.factory('media', function($rootScope, coral, $sce, $http, devices, utility) {
 
 
 		var posters = {
@@ -37,8 +37,8 @@
 		};
 		var media = {
 			init: function() {
-				socket.addHandler(publishHandler, "publish");
-				socket.subscribe("publish", "class", "mediaServer");
+				coral.addHandler(publishHandler, "publish");
+				coral.subscribe("publish", "class", "mediaServer");
 				$rootScope.$watch(
 					function() {return devices.list;},
 					function(newValue) {
@@ -112,7 +112,7 @@
 
 	});
 
-	app.controller('mediaController', function($scope, media, $rootScope, socket) {
+	app.controller('mediaController', function($scope, media, $rootScope, coral) {
 		$scope.getMedia = function() {
 			return media.getMedia();
 		};

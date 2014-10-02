@@ -1,10 +1,10 @@
 (function() {
 	'use strict';
 
-	app.factory('player', function(socket, $rootScope, $state, $sce) {
+	app.factory('player', function(coral, $rootScope, $state, $sce) {
 		var player = {
 			init: function() {
-				socket.addHandler(messageHandler, "message");
+				coral.addHandler(messageHandler, "message");
 				$rootScope.player = {};
 				$rootScope.$watch(
 					function() {return $rootScope.player.source;},
@@ -73,7 +73,7 @@
 				});
 			}
 
-			socket.sendMessage(reply, data.fromId);
+			coral.sendMessage(reply, data.fromId);
 		}
 
 		return player;
@@ -156,7 +156,7 @@
 		};
 	});
 
-	app.controller('playerController', function($scope, socket) {
+	app.controller('playerController', function($scope, coral) {
 		$scope.$watch(
 			function() {return $scope.player.currentTime;},
 			function(currentTime) {
@@ -167,7 +167,7 @@
 				};
 				console.log('sending time update');
 				console.log(timeUpdate);
-				socket.sendMessage(timeUpdate, $scope.player.master);
+				coral.sendMessage(timeUpdate, $scope.player.master);
 			}
 		);
 	});
