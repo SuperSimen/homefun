@@ -73,7 +73,7 @@
 				});
 			}
 
-			coral.sendMessage(reply, data.fromId);
+			coral.sendMessage(data.fromId, reply);
 		}
 
 		return player;
@@ -165,9 +165,7 @@
 					duration: $scope.player.duration,
 					type: 'time-update'
 				};
-				console.log('sending time update');
-				console.log(timeUpdate);
-				coral.sendMessage(timeUpdate, $scope.player.master);
+				coral.sendMessage($scope.player.master, timeUpdate);
 			}
 		);
 	});

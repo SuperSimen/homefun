@@ -14,10 +14,11 @@
 
 			getWebSocket: function() {
 				var webSocket = "ws://" + this.ip + ":" + this.webSocketPort;
-				console.log(webSocket);
 				return webSocket;
 			},
 		};
+
+		config.debug = true;
 
 		return config;
 

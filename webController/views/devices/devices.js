@@ -175,7 +175,7 @@
 			else if (command === 'go-to' && $scope.activeDevice.goToTime) {
 				message.goToTime = $scope.activeDevice.goToTime;
 			}
-			coral.sendMessage(message, $scope.activeDevice.id);
+			coral.sendMessage($scope.activeDevice.id, message);
 		};
 
 	});
