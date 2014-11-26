@@ -1,4 +1,4 @@
-var app = angular.module('app', ['ui.router', 'coral']);
+var app = angular.module('app', ['ui.router', 'coral', 'config']);
 
 (function() {
 	'use strict';
@@ -49,11 +49,11 @@ var app = angular.module('app', ['ui.router', 'coral']);
 		$state.go("devices");
 	});
 
-	app.factory('constants', function() {
+	app.factory('constants', function(config) {
 		return {
 			networkName: "homefun",
 			className: "webController",
-			webSocketUrl: "ws://192.168.1.128:10012",
+			webSocketUrl: config.coralServer,
 		};
 
 	});

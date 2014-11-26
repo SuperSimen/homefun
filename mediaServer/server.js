@@ -2,23 +2,21 @@
 	'use strict';
 
 	var net = require('net');
-	var socket = net.connect(10011, '192.168.1.128');
-
+	var fs = require('fs');
 	var express = require('express');
-	var app = express();
+	var chokidar = require('chokidar');
 
+	var coralServer = parseConfigFile('../config.js');
+	var socket = net.connect(10011, coralServer);
+
+	var app = express();
 	app.use(express.static(__dirname + "/media"));
 
-	var port = 10013;
+	var port = 10014;
 	var myIp;
 	var files = [];
 
 	app.listen(port);
-
-	var fs = require('fs');
-
-	var chokidar = require('chokidar');
-
 
 	init();
 	function init() {
@@ -27,6 +25,7 @@
 		socket.on('data', function(data) {
 			onIncomingData(data);
 		});
+
 
 		register();
 
@@ -48,6 +47,14 @@
 			publishFiles();
 		});
 		
+	}
+
+	function parseConfigFile(filename) {
+		var file = fs.readFileSync(filename, {encoding: 'utf8'});
+		var coralServer = file.substr(file.indexOf('coralServer'));
+		coralServer = coralServer.substr(coralServer.indexOf('ws://') + 5);
+		coralServer = coralServer.substr(0, coralServer.indexOf(':'));
+		return coralServer;
 	}
 
 

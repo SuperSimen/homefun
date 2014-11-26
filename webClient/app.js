@@ -1,4 +1,4 @@
-var app = angular.module('app', ['ui.router', 'coral']);
+var app = angular.module('app', ['ui.router', 'coral', 'config']);
 
 (function() {
 	'use strict';
@@ -24,18 +24,16 @@ var app = angular.module('app', ['ui.router', 'coral']);
 	});
 
 	app.run( function ($state, player, welcome, constants, coral) {
-		coral.connect(constants, function() {
-			welcome.init();
-			player.init();
-		});
 		$state.go("welcome");
+		welcome.init();
+		player.init();
 	});
 
-	app.factory('constants', function() {
+	app.factory('constants', function(config) {
 		return {
 			networkName: "homefun",
 			className: "webClient",
-			webSocketUrl: "ws://192.168.1.128:10012",
+			webSocketUrl: config.coralServer,
 		};
 
 	});
