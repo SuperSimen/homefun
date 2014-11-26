@@ -53,6 +53,7 @@
 		var file = fs.readFileSync(filename, {encoding: 'utf8'});
 		var coralServer = {};
 		var coralConfig = file.substr(file.indexOf('config.coralServer'));
+		var temp;
 
 		temp = coralConfig;
 		temp = temp.substr(temp.indexOf('ip'));
