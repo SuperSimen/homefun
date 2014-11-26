@@ -4,7 +4,7 @@
 	app.factory('player', function(coral, $rootScope, $state, $sce) {
 		var player = {
 			init: function() {
-				coral.addHandler(messageHandler, "message");
+				coral.on("message", messageHandler);
 				$rootScope.player = {};
 				$rootScope.$watch(
 					function() {return $rootScope.player.source;},

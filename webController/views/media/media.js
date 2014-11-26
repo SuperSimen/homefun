@@ -37,7 +37,7 @@
 		};
 		var media = {
 			init: function() {
-				coral.addHandler(publishHandler, "publish");
+				coral.on("publish", publishHandler);
 				coral.subscribe("publish", "class", "mediaServer");
 				$rootScope.$watch(
 					function() {return devices.list;},

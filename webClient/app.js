@@ -33,7 +33,7 @@ var app = angular.module('app', ['ui.router', 'coral', 'config']);
 		return {
 			networkName: "homefun",
 			className: "webClient",
-			webSocketUrl: config.coralServer,
+			wsUrl: config.coralServer.getWebSocket(),
 		};
 
 	});

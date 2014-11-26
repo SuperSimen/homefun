@@ -6,8 +6,8 @@
 
 		var devices = {
 			init: function() {
-				coral.addHandler(presenceHandler, "presence");
-				coral.addHandler(messageHandler, "message");
+				coral.on("presence", presenceHandler);
+				coral.on("message", messageHandler);
 				coral.subscribe("presence", "all", "");
 
 			},

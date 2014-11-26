@@ -6,7 +6,18 @@
 	configModule.factory('config', function() {
 		var config = {};
 
-		config.coralServer = "ws://192.168.1.130:10012";
+		config.coralServer = {
+			ip: "192.168.1.130",
+			socketPort: "10011",
+			webSocketPort: "10012",
+			sslWebSocketPort: "10013",
+
+			getWebSocket: function() {
+				var webSocket = "ws://" + this.ip + ":" + this.webSocketPort;
+				console.log(webSocket);
+				return webSocket;
+			},
+		};
 
 		return config;
 

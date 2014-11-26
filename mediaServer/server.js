@@ -7,7 +7,7 @@
 	var chokidar = require('chokidar');
 
 	var coralServer = parseConfigFile('../config.js');
-	var socket = net.connect(10011, coralServer);
+	var socket = net.connect(coralServer.port, coralServer.ip);
 
 	var app = express();
 	app.use(express.static(__dirname + "/media"));
@@ -51,9 +51,20 @@
 
 	function parseConfigFile(filename) {
 		var file = fs.readFileSync(filename, {encoding: 'utf8'});
-		var coralServer = file.substr(file.indexOf('coralServer'));
-		coralServer = coralServer.substr(coralServer.indexOf('ws://') + 5);
-		coralServer = coralServer.substr(0, coralServer.indexOf(':'));
+		var coralServer = {};
+		var coralConfig = file.substr(file.indexOf('config.coralServer'));
+
+		temp = coralConfig;
+		temp = temp.substr(temp.indexOf('ip'));
+		temp = temp.substr(temp.indexOf('"') + 1);
+		temp = temp.substr(0, temp.indexOf('"'));
+		coralServer.ip = temp;
+
+		temp = coralConfig;
+		temp = temp.substr(temp.indexOf('socketPort'));
+		temp = temp.substr(temp.indexOf('"') + 1);
+		temp = temp.substr(0, temp.indexOf('"'));
+		coralServer.port = temp;
 		return coralServer;
 	}
 
