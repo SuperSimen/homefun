@@ -85,18 +85,17 @@
 	}
 
 	function publishFiles() {
-		if (!myIp) {
-			return console.error("not correctly registered");
-		}
-		var message = {
-			files: files,
-			path: "http://" + myIp + ":" + port,
-		};
+		if (myIp) {
+			var message = {
+				files: files,
+				path: "http://" + myIp + ":" + port,
+			};
 
-		send({
-			type: "publish",
-			message: message
-		});
+			send({
+				type: "publish",
+				message: message
+			});
+		}
 	}
 
 	function register() {

@@ -7,7 +7,7 @@
 		var config = {};
 
 		config.coralServer = {
-			ip: "192.168.1.130",
+			ip: "owesen-lein.no",
 			socketPort: "10011",
 			webSocketPort: "10012",
 			sslWebSocketPort: "10013",
