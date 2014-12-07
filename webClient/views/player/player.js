@@ -59,6 +59,7 @@
 				$rootScope.player.master = "";
 				$rootScope.player.currentTime = 0;
 				$rootScope.player.duration = 0;
+				$rootScope.player.goToTime = 0;
 			}
 			else if (command.type === "go-to") {
 				$rootScope.player.goToTime = command.goToTime;
@@ -97,6 +98,7 @@
 			scope.$watch(
 				function() {return scope.control.goToTime;},
 				function(time) {
+					console.log('going-to-time');
 					if (time >= 0) {
 						element[0].currentTime = time;
 					}
